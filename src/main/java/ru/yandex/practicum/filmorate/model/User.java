@@ -4,7 +4,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-import java.time.Instant;
 import java.time.LocalDate;
 
 @Data
@@ -18,6 +17,7 @@ public class User {
         this.email = email;
         this.birthday = birthday;
     }
+
     private Integer id;
     @Email
     private String email;

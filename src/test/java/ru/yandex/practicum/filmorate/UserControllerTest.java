@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.time.Instant;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
