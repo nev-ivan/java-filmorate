@@ -26,7 +26,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@Valid @RequestBody User user) {
+    public User create(@RequestBody User user) {
         validate(user);
         user.setId(getNextId());
         users.put(user.getId(), user);
@@ -35,7 +35,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User update(@Valid @RequestBody User user) {
+    public User update(@RequestBody User user) {
 
         if (user.getId() == null) {
             log.warn("ConditionsNotMetException");

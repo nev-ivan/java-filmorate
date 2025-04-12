@@ -27,7 +27,7 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film create(@Valid @RequestBody Film film) {
+    public Film create(@RequestBody Film film) {
         validate(film);
         film.setId(getNextId());
         films.put(film.getId(), film);
@@ -36,7 +36,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(@Valid @RequestBody Film film) {
+    public Film update(@RequestBody Film film) {
         if (film == null) {
             return film;
         }
