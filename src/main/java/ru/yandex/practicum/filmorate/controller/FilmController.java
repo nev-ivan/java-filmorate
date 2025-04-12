@@ -18,8 +18,8 @@ import java.util.Map;
 @Slf4j
 public class FilmController {
     private final Map<Integer, Film> films = new HashMap<>();
-    private final int MAX_DESCRIPTION_SIZE = 200;
-    private final LocalDate EARLY_DATE = LocalDate.parse("1985-12-28");
+    private static final int MAX_DESCRIPTION_SIZE = 200;
+    private static final LocalDate EARLY_DATE = LocalDate.parse("1985-12-28");
 
     @GetMapping
     public List<Film> findAll() {
