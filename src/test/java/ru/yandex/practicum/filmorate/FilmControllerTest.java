@@ -26,27 +26,36 @@ public class FilmControllerTest {
 
     @Test
     void createFilmTest() {
-        film.setName(" ");
-        Exception exception = assertThrows(ValidateException.class, () -> filmController.create(film));
-        assertEquals("Название не может быть пустым", exception.getMessage());
-        film.setName("name");
-        film.setReleaseDate(LocalDate.parse("1984-12-28"));
-        exception = assertThrows(ValidateException.class, () -> filmController.create(film));
-        assertEquals("Дата должна быть позднее 28 декабря 1985 г.", exception.getMessage());
-        film.setReleaseDate(LocalDate.now());
-        film.setDuration(0);
-        exception = assertThrows(ValidateException.class, () -> filmController.create(film));
-        assertEquals("Продолжительность должна быть положительным числом", exception.getMessage());
+        filmController.create(film);
+        assertEquals(1, filmController.findAll().size(), "Ошибка в создании фильма");
     }
 
     @Test
     void updateFilmTest() {
-        filmController.create(film);
-        Film film1 = new Film(film.getId(), " ", "description", LocalDate.parse("1994-12-28"), 20);
-        assertThrows(ValidateException.class, () -> filmController.update(film1));
-        Film film2 = new Film(film.getId(), film.getName(), "description", LocalDate.parse("1984-12-28"), 20);
-        assertThrows(ValidateException.class, () -> filmController.update(film2));
-        Film film3 = new Film(film.getId(), film.getName(), "description", film.getReleaseDate(), 0);
-        assertThrows(ValidateException.class, () -> filmController.update(film3));
+        Film newFilm = filmController.create(film);
+        newFilm.setDuration(200);
+        Film filmTest = filmController.update(newFilm);
+        assertTrue(filmController.findAll().contains(filmTest), "Ошибка обновления фильма");
+    }
+
+    @Test
+    void blankNameTest() {
+        film.setName(" ");
+        Exception exception = assertThrows(ValidateException.class, () -> filmController.create(film));
+        assertEquals("Название не может быть пустым", exception.getMessage());
+    }
+
+    @Test
+    void dateEarlyBorderTest() {
+        film.setReleaseDate(LocalDate.parse("1984-12-28"));
+        Exception exception = assertThrows(ValidateException.class, () -> filmController.create(film));
+        assertEquals("Дата должна быть позднее 28 декабря 1985 г.", exception.getMessage());
+    }
+
+    @Test
+    void zeroDurationTest() {
+        film.setDuration(0);
+        Exception exception = assertThrows(ValidateException.class, () -> filmController.create(film));
+        assertEquals("Продолжительность должна быть положительным числом", exception.getMessage());
     }
 }
