@@ -66,11 +66,8 @@ public class FilmController {
             throw new ValidateException("Превышена длина описания");
         }
 
-        if (film.getReleaseDate() == null) {
+        if (film.getReleaseDate() == null || film.getReleaseDate().isBefore(EARLY_DATE)) {
             log.warn("ValidateException");
-            throw new ValidateException("Дата должна быть заполнена");
-        } else if (film.getReleaseDate().isBefore(EARLY_DATE)) {
-            log.warn("ValidationException");
             throw new ValidateException("Дата должна быть позднее 28 декабря 1985 г.");
         }
 
