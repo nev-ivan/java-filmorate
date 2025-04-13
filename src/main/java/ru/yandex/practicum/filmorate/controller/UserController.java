@@ -35,42 +35,26 @@ public class UserController {
 
     @PutMapping
     public User update(@RequestBody User user) {
-
+        if (user == null) {
+            log.warn("Объект пустой");
+            return null;
+        }
+        validate(user);
         if (user.getId() == null) {
             log.warn("ConditionsNotMetException");
             throw new ConditionsNotMetException("Id должен быть указан");
         }
-        User newUser = users.get(user.getId());
-        if (newUser == null) {
+        if (!users.containsKey(user.getId())) {
             log.warn("NotFoundException");
             throw new NotFoundException("Такого пользователя не существует");
         }
 
-        if (user.getEmail() != null) {
-            newUser.setEmail(user.getEmail());
-            log.trace("Имейл заменен");
-        }
-
-        if (user.getLogin() != null) {
-            newUser.setLogin(user.getLogin());
-            log.trace("Логин заменен");
-        }
-
-        if (user.getName() != null) {
-            newUser.setName(user.getName());
-            log.trace("Имя заменено");
-        }
-
-        newUser.setBirthday(user.getBirthday());
-        log.trace("Дата рождения заменена");
-
-        validate(newUser);
-        users.put(newUser.getId(), newUser);
+        users.put(user.getId(), user);
         log.info("Данные пользователя обновлены");
-        return newUser;
+        return user;
     }
 
-    public void validate(User user) {
+    private void validate(User user) {
         if (user.getEmail() == null || user.getEmail().isBlank()) {
             log.warn("ValidationException");
             throw new ValidateException("Имейл должен быть записан");
@@ -91,7 +75,7 @@ public class UserController {
             user.setName(user.getLogin());
         }
 
-        if (user.getBirthday().isAfter(LocalDate.now())) {
+        if (user.getBirthday() == null || user.getBirthday().isAfter(LocalDate.now())) {
             log.warn("ValidationException");
             throw new ValidateException("Не правильно указана дата рождения");
         }

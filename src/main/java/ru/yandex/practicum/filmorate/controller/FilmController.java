@@ -37,8 +37,11 @@ public class FilmController {
     @PutMapping
     public Film update(@RequestBody Film film) {
         if (film == null) {
+            log.warn("Объект пустой");
             return film;
         }
+        validate(film);
+
         if (film.getId() == null) {
             log.warn("ConditionsNotMetException");
             throw new ConditionsNotMetException("Id должен быть заполнен");
@@ -47,39 +50,26 @@ public class FilmController {
             throw new NotFoundException("Такого фильма нет в нашем списке");
         }
 
-        Film newFilm = films.get(film.getId());
-
-        if (film.getName() != null) {
-            newFilm.setName(film.getName());
-            log.trace("Имя заменено");
-        }
-
-        if (film.getDescription() != null) {
-            newFilm.setDescription(film.getDescription());
-            log.trace("Описание заменено");
-        }
-        newFilm.setDuration(film.getDuration());
-        log.trace("Продолжительность заменена");
-        newFilm.setReleaseDate(film.getReleaseDate());
-        log.trace("Дата релиза изменена");
-        validate(newFilm);
-        films.put(newFilm.getId(), film);
+        films.put(film.getId(), film);
         log.info("Фильм обновлен");
-        return newFilm;
+        return film;
     }
 
-    public void validate(Film film) {
+    private void validate(Film film) {
         if (film.getName() == null || film.getName().isBlank()) {
             log.warn("ValidationException");
             throw new ValidateException("Название не может быть пустым");
         }
 
-        if (film.getDescription() != null && film.getDescription().getBytes().length > MAX_DESCRIPTION_SIZE) {
+        if (film.getDescription() != null && film.getDescription().length() > MAX_DESCRIPTION_SIZE) {
             log.warn("ValidationException");
             throw new ValidateException("Превышена длина описания");
         }
 
-        if (film.getReleaseDate().isBefore(EARLY_DATE)) {
+        if (film.getReleaseDate() == null) {
+            log.warn("Дата релиза пустая");
+            throw new ValidateException("Дата должна быть заполнена");
+        } else if(film.getReleaseDate().isBefore(EARLY_DATE)) {
             log.warn("ValidationException");
             throw new ValidateException("Дата должна быть позднее 28 декабря 1985 г.");
         }

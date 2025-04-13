@@ -34,7 +34,7 @@ public class FilmControllerTest {
         exception = assertThrows(ValidateException.class, () -> filmController.create(film));
         assertEquals("Дата должна быть позднее 28 декабря 1985 г.", exception.getMessage());
         film.setReleaseDate(LocalDate.now());
-        film.setDuration(0L);
+        film.setDuration(0);
         exception = assertThrows(ValidateException.class, () -> filmController.create(film));
         assertEquals("Продолжительность должна быть положительным числом", exception.getMessage());
     }
