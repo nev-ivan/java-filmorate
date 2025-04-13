@@ -67,7 +67,7 @@ public class FilmController {
         }
 
         if (film.getReleaseDate() == null) {
-            log.warn("Дата релиза пустая");
+            log.warn("ValidateException");
             throw new ValidateException("Дата должна быть заполнена");
         } else if (film.getReleaseDate().isBefore(EARLY_DATE)) {
             log.warn("ValidationException");
