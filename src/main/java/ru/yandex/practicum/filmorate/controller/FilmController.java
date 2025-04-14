@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
@@ -18,7 +19,7 @@ import java.util.Map;
 public class FilmController {
     private final Map<Integer, Film> films = new HashMap<>();
     private static final int MAX_DESCRIPTION_SIZE = 200;
-    private static final LocalDate EARLY_DATE = LocalDate.parse("1985-12-28");
+    private static final LocalDate EARLY_DATE = LocalDate.parse("1895-12-28");
 
     @GetMapping
     public List<Film> findAll() {
@@ -26,7 +27,7 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film create(@RequestBody Film film) {
+    public Film create(@Valid @RequestBody Film film) {
         if (film == null) {
             log.warn("Объект пустой");
             return null;
