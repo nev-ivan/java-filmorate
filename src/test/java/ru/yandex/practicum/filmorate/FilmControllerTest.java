@@ -47,7 +47,7 @@ public class FilmControllerTest {
 
     @Test
     void dateEarlyBorderTest() {
-        film.setReleaseDate(LocalDate.parse("1984-12-28"));
+        film.setReleaseDate(LocalDate.parse("1894-12-28"));
         Exception exception = assertThrows(ValidateException.class, () -> filmController.create(film));
         assertEquals("Дата должна быть позднее 28 декабря 1985 г.", exception.getMessage());
     }
