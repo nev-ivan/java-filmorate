@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
@@ -25,7 +26,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@RequestBody User user) {
+    public User create(@Valid @RequestBody User user) {
         if (user == null) {
             log.warn("Объект пустой");
             return null;
@@ -43,7 +44,7 @@ public class UserController {
             log.warn("Объект пустой");
             return null;
         }
-        validate(user);
+
         if (user.getId() == null) {
             log.warn("ConditionsNotMetException");
             throw new ConditionsNotMetException("Id должен быть указан");
@@ -51,6 +52,26 @@ public class UserController {
         if (!users.containsKey(user.getId())) {
             log.warn("NotFoundException");
             throw new NotFoundException("Такого пользователя не существует");
+        }
+
+        User newUser = users.get(user.getId());
+
+        if (user.getEmail() != null && user.getEmail().contains("@")) {
+            newUser.setEmail(user.getEmail());
+        }
+
+        if (user.getLogin() != null && !user.getLogin().isBlank() && !user.getLogin().contains(" ")) {
+            newUser.setLogin(user.getLogin());
+        }
+
+        if (user.getName() != null && !user.getName().isBlank()) {
+            newUser.setName(user.getName());
+        } else if (user.getName() != null && user.getName().isBlank() && newUser.getName().isBlank()) {
+            newUser.setName(newUser.getLogin());
+        }
+
+        if (user.getBirthday() != null && user.getBirthday().isBefore(LocalDate.now())) {
+            newUser.setBirthday(user.getBirthday());
         }
 
         users.put(user.getId(), user);

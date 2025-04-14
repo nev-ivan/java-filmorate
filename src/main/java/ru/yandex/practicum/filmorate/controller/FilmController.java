@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
@@ -39,12 +40,11 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(@RequestBody Film film) {
+    public Film update(@Valid @RequestBody Film film) {
         if (film == null) {
             log.warn("Объект пустой");
             return film;
         }
-        validate(film);
 
         if (film.getId() == null) {
             log.warn("ConditionsNotMetException");
@@ -52,6 +52,24 @@ public class FilmController {
         } else if (!films.containsKey(film.getId())) {
             log.warn("NotFoundException");
             throw new NotFoundException("Такого фильма нет в нашем списке");
+        }
+
+        Film newFilm = films.get(film.getId());
+
+        if (film.getName() != null && !film.getName().isBlank()) {
+            newFilm.setName(film.getName());
+        }
+
+        if (film.getDescription() != null && film.getDescription().length() < MAX_DESCRIPTION_SIZE) {
+            newFilm.setDescription(film.getDescription());
+        }
+
+        if (film.getReleaseDate() != null && film.getReleaseDate().isAfter(EARLY_DATE)) {
+            newFilm.setDescription(film.getDescription());
+        }
+
+        if (film.getDuration() > 0) {
+            newFilm.setDuration(film.getDuration());
         }
 
         films.put(film.getId(), film);
