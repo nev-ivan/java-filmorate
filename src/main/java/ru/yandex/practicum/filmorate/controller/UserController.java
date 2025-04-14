@@ -26,6 +26,10 @@ public class UserController {
 
     @PostMapping
     public User create(@RequestBody User user) {
+        if (user == null) {
+            log.warn("Объект пустой");
+            return null;
+        }
         validate(user);
         user.setId(getNextId());
         users.put(user.getId(), user);

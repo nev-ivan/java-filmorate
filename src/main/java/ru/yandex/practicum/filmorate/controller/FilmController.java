@@ -27,6 +27,10 @@ public class FilmController {
 
     @PostMapping
     public Film create(@RequestBody Film film) {
+        if (film == null) {
+            log.warn("Объект пустой");
+            return null;
+        }
         validate(film);
         film.setId(getNextId());
         films.put(film.getId(), film);
@@ -66,7 +70,10 @@ public class FilmController {
             throw new ValidateException("Превышена длина описания");
         }
 
-        if (film.getReleaseDate() == null || film.getReleaseDate().isBefore(EARLY_DATE)) {
+        if (film.getReleaseDate() == null) {
+            log.warn("ValidateException");
+            throw new ValidateException("Дата релиза должна быть прописана.");
+        } else if (film.getReleaseDate().isBefore(EARLY_DATE)) {
             log.warn("ValidateException");
             throw new ValidateException("Дата должна быть позднее 28 декабря 1985 г.");
         }
