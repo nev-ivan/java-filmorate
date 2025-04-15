@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.FilmController;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -53,9 +54,38 @@ public class FilmControllerTest {
     }
 
     @Test
-    void zeroDurationTest() {
+    void badDurationTest() {
         film.setDuration(0);
         Exception exception = assertThrows(ValidateException.class, () -> filmController.create(film));
         assertEquals("Продолжительность должна быть положительным числом", exception.getMessage());
+        film.setDuration(-1);
+        exception = assertThrows(ValidateException.class, () -> filmController.create(film));
+        assertEquals("Продолжительность должна быть положительным числом", exception.getMessage());
+    }
+
+    @Test
+    void longDescriptionTest() {
+        String longLine = "line";
+        for(int i = 0; i <=200; i++) {
+            longLine = longLine + i;
+        }
+        film.setDescription(longLine);
+        Exception e = assertThrows(ValidateException.class, () -> filmController.create(film));
+        assertEquals("Превышена длина описания", e.getMessage());
+    }
+
+    @Test
+    void createFilmWithNullFieldTest() {
+        film.setReleaseDate(null);
+        Exception e = assertThrows(ValidateException.class, () -> filmController.create(film));
+        assertEquals("Дата релиза должна быть прописана.", e.getMessage());
+    }
+
+    @Test
+    void unknownFilmUpdate() {
+        Film testFilm = filmController.create(film);
+        testFilm.setId(100);
+        Exception e = assertThrows(NotFoundException.class, () -> filmController.update(testFilm));
+        assertEquals("Такого фильма нет в нашем списке", e.getMessage());
     }
 }

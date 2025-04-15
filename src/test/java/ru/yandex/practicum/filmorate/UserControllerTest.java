@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -32,10 +33,24 @@ public class UserControllerTest {
     }
 
     @Test
+    void loginWithWhiteSpaceTest() {
+        user.setLogin("user name");
+        Exception e =  assertThrows(ConditionsNotMetException.class, () -> userController.create(user));
+        assertEquals("Нельзя добавлять пробелы в логин", e.getMessage());
+    }
+
+    @Test
     void badEmailTest() {
         user.setEmail("username");
         Exception e = assertThrows(ConditionsNotMetException.class, () -> userController.create(user));
         assertEquals(user.getEmail() + " - Это не имейл", e.getMessage());
+    }
+
+    @Test
+    void blankEmailTest() {
+        user.setEmail("  ");
+        Exception e = assertThrows(ValidateException.class, () -> userController.create(user));
+        assertEquals("Имейл должен быть записан", e.getMessage());
     }
 
     @Test
@@ -58,6 +73,14 @@ public class UserControllerTest {
         user1.setLogin("username22");
         User userTest = userController.update(user1);
         assertTrue(userController.findAll().contains(userTest));
+    }
+
+    @Test
+    void unknownUserUpdate() {
+        User testUser = userController.create(user);
+        testUser.setId(100);
+        Exception e = assertThrows(NotFoundException.class, () -> userController.update(testUser));
+        assertEquals("Такого пользователя не существует", e.getMessage());
     }
 
     @Test
