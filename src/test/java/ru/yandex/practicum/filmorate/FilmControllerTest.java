@@ -66,7 +66,7 @@ public class FilmControllerTest {
     @Test
     void longDescriptionTest() {
         String longLine = "line";
-        for(int i = 0; i <=200; i++) {
+        for (int i = 0; i <= 200; i++) {
             longLine = longLine + i;
         }
         film.setDescription(longLine);
