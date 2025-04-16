@@ -33,10 +33,6 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        if (film == null) {
-            log.warn("Объект пустой");
-            return null;
-        }
         validate(film);
         film.setId(getNextId());
         films.put(film.getId(), film);
@@ -83,20 +79,7 @@ public class FilmController {
     }
 
     private void validate(Film film) {
-        if (film.getName() == null || film.getName().isBlank()) {
-            log.warn("ValidationException");
-            throw new ValidateException("Название не может быть пустым");
-        }
-
-        if (film.getDescription() != null && film.getDescription().length() > MAX_DESCRIPTION_SIZE) {
-            log.warn("ValidationException");
-            throw new ValidateException("Превышена длина описания");
-        }
-
-        if (film.getReleaseDate() == null) {
-            log.warn("ValidateException");
-            throw new ValidateException("Дата релиза должна быть прописана.");
-        } else if (film.getReleaseDate().isBefore(EARLY_DATE)) {
+        if (film.getReleaseDate().isBefore(EARLY_DATE)) {
             log.warn("ValidateException");
             throw new ValidateException("Дата должна быть позднее 28 декабря 1985 г.");
         }

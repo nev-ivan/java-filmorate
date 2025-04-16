@@ -1,20 +1,26 @@
 package ru.yandex.practicum.filmorate;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserControllerTest {
     UserController userController;
     User user;
+    Validator validator;
+    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 
     @BeforeEach
     void beforeEach() {
@@ -23,41 +29,50 @@ public class UserControllerTest {
         user.setLogin("username");
         user.setEmail("username@email");
         user.setBirthday(LocalDate.parse("1996-02-27"));
+        validator = factory.getValidator();
     }
 
     @Test
     void blankLoginTest() {
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertTrue(violations.isEmpty());
         user.setLogin(" ");
-        Exception e = assertThrows(ValidateException.class, () -> userController.create(user));
-        assertEquals("Логин должен быть прописан", e.getMessage());
+        Set<ConstraintViolation<User>> violations2 = validator.validate(user);
+        assertFalse(violations2.isEmpty());
     }
 
     @Test
     void loginWithWhiteSpaceTest() {
         user.setLogin("user name");
-        Exception e =  assertThrows(ConditionsNotMetException.class, () -> userController.create(user));
+        Exception e = assertThrows(ConditionsNotMetException.class, () -> userController.create(user));
         assertEquals("Нельзя добавлять пробелы в логин", e.getMessage());
     }
 
     @Test
     void badEmailTest() {
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertTrue(violations.isEmpty());
         user.setEmail("username");
-        Exception e = assertThrows(ConditionsNotMetException.class, () -> userController.create(user));
-        assertEquals(user.getEmail() + " - Это не имейл", e.getMessage());
+        Set<ConstraintViolation<User>> violations2 = validator.validate(user);
+        assertFalse(violations2.isEmpty());
     }
 
     @Test
     void blankEmailTest() {
-        user.setEmail("  ");
-        Exception e = assertThrows(ValidateException.class, () -> userController.create(user));
-        assertEquals("Имейл должен быть записан", e.getMessage());
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertTrue(violations.isEmpty());
+        user.setEmail(" ");
+        Set<ConstraintViolation<User>> violations2 = validator.validate(user);
+        assertFalse(violations2.isEmpty());
     }
 
     @Test
     void birthdayBeforeNowTest() {
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertTrue(violations.isEmpty());
         user.setBirthday(LocalDate.now().plusYears(5));
-        Exception e = assertThrows(ValidateException.class, () -> userController.create(user));
-        assertEquals("Не правильно указана дата рождения", e.getMessage());
+        Set<ConstraintViolation<User>> violations2 = validator.validate(user);
+        assertFalse(violations2.isEmpty());
     }
 
     @Test

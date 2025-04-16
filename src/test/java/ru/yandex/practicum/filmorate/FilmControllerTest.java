@@ -1,5 +1,8 @@
 package ru.yandex.practicum.filmorate;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.FilmController;
@@ -8,12 +11,14 @@ import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FilmControllerTest {
     FilmController filmController;
     Film film;
+    Validator validator;
 
     @BeforeEach
     void beforeEach() {
@@ -23,6 +28,7 @@ public class FilmControllerTest {
         film.setDescription("description");
         film.setReleaseDate(LocalDate.now());
         film.setDuration(60);
+        validator = Validation.buildDefaultValidatorFactory().getValidator();
     }
 
     @Test
@@ -41,9 +47,11 @@ public class FilmControllerTest {
 
     @Test
     void blankNameTest() {
+        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        assertTrue(violations.isEmpty());
         film.setName(" ");
-        Exception exception = assertThrows(ValidateException.class, () -> filmController.create(film));
-        assertEquals("Название не может быть пустым", exception.getMessage());
+        Set<ConstraintViolation<Film>> violations2 = validator.validate(film);
+        assertFalse(violations2.isEmpty());
     }
 
     @Test
@@ -65,20 +73,24 @@ public class FilmControllerTest {
 
     @Test
     void longDescriptionTest() {
+        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        assertTrue(violations.isEmpty());
         String longLine = "line";
         for (int i = 0; i <= 200; i++) {
             longLine = longLine + i;
         }
         film.setDescription(longLine);
-        Exception e = assertThrows(ValidateException.class, () -> filmController.create(film));
-        assertEquals("Превышена длина описания", e.getMessage());
+        Set<ConstraintViolation<Film>> violations2 = validator.validate(film);
+        assertFalse(violations2.isEmpty());
     }
 
     @Test
     void createFilmWithNullFieldTest() {
+        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        assertTrue(violations.isEmpty());
         film.setReleaseDate(null);
-        Exception e = assertThrows(ValidateException.class, () -> filmController.create(film));
-        assertEquals("Дата релиза должна быть прописана.", e.getMessage());
+        Set<ConstraintViolation<Film>> violations2 = validator.validate(film);
+        assertFalse(violations2.isEmpty());
     }
 
     @Test

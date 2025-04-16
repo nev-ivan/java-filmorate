@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -27,10 +26,6 @@ public class UserController {
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        if (user == null) {
-            log.warn("Объект пустой");
-            return null;
-        }
         validate(user);
         user.setId(getNextId());
         users.put(user.getId(), user);
@@ -80,17 +75,7 @@ public class UserController {
     }
 
     private void validate(User user) {
-        if (user.getEmail() == null || user.getEmail().isBlank()) {
-            log.warn("ValidationException");
-            throw new ValidateException("Имейл должен быть записан");
-        } else if (!user.getEmail().contains("@")) {
-            log.warn("ConditionsNotMetException");
-            throw new ConditionsNotMetException(user.getEmail() + " - Это не имейл");
-        }
-        if (user.getLogin() == null || user.getLogin().isBlank()) {
-            log.warn("ValidationException");
-            throw new ValidateException("Логин должен быть прописан");
-        }
+
         if (user.getLogin().contains(" ")) {
             log.warn("ConditionsNotMetException");
             throw new ConditionsNotMetException("Нельзя добавлять пробелы в логин");
@@ -98,11 +83,6 @@ public class UserController {
 
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
-        }
-
-        if (user.getBirthday() == null || user.getBirthday().isAfter(LocalDate.now())) {
-            log.warn("ValidationException");
-            throw new ValidateException("Не правильно указана дата рождения");
         }
     }
 
