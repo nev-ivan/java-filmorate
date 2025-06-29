@@ -10,6 +10,9 @@ import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -21,10 +24,14 @@ public class UserControllerTest {
     User user;
     Validator validator;
     ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    UserStorage userStorage;
+    UserService userService;
 
     @BeforeEach
     void beforeEach() {
-        userController = new UserController();
+        userStorage = new InMemoryUserStorage();
+        userService = new UserService(userStorage);
+        userController = new UserController(userStorage, userService);
         user = new User();
         user.setLogin("username");
         user.setEmail("username@email");
@@ -102,5 +109,23 @@ public class UserControllerTest {
     void nameEqualLoginTest() {
         userController.create(user);
         assertEquals(user.getLogin(), user.getName());
+    }
+
+    @Test
+    void makeFriend() {
+        User user2 = new User("login", "name2", "name@mail", LocalDate.parse("1996-02-27"));
+        userController.create(user);
+        userController.create(user2);
+        userController.makeFriends(user.getId(), user2.getId());
+        assertTrue(user.getFriends().contains(user2.getId()));
+    }
+
+    @Test
+    void getFriends() {
+        User user2 = new User("login", "name2", "name@mail", LocalDate.parse("1996-02-27"));
+        userController.create(user);
+        userController.create(user2);
+        userController.makeFriends(user.getId(), user2.getId());
+
     }
 }

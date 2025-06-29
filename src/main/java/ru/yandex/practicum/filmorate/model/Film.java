@@ -4,11 +4,13 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Film {
+public class Film implements Comparable<Film> {
     public Film(String name, String description, LocalDate releaseDate, long duration) {
         this.name = name;
         this.description = description;
@@ -16,7 +18,12 @@ public class Film {
         this.duration = duration;
     }
 
+    @Override
+    public int compareTo(Film other) {
+        return Integer.compare(other.getLikes().size(), this.getLikes().size());
+    }
 
+    private Set<Integer> likes = new HashSet<>();
     private Integer id;
     @NotBlank
     private String name;
