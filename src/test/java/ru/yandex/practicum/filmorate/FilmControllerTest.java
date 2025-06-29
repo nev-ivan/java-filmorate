@@ -120,8 +120,8 @@ public class FilmControllerTest {
         Film film2 = new Film("name", "description", LocalDate.now(), 120);
         filmController.create(film2);
         User user = new User("name", "login", "email@email", LocalDate.parse("1996-02-27"));
-        user.setId(3);
-        filmController.makeLike(film2.getId(), 3);
+        userStorage.create(user);
+        filmController.makeLike(film2.getId(), user.getId());
         List<Film> popular = filmController.getPopularFilms(1000);
         assertEquals(2, popular.size(), "размер должен равняться 1");
         assertEquals(film2, popular.getFirst(), "должен отобразиться фильм");
