@@ -12,11 +12,14 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.util.List;
 import java.util.Set;
 
-@RequiredArgsConstructor
+
 @Service
+@RequiredArgsConstructor
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+
+
 
     public void doLike(int filmId, int userId) {
         checkId(filmId);

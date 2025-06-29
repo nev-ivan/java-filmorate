@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
@@ -15,11 +15,16 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
     private final UserStorage userStorage;
     private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService, UserStorage userStorage) {
+        this.userService = userService;
+        this.userStorage = userStorage;
+    }
 
     @GetMapping
     public List<User> findAll() {

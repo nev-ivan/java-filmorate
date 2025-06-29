@@ -11,8 +11,8 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.util.List;
 import java.util.Set;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class UserService {
     private final UserStorage userStorage;
@@ -20,7 +20,6 @@ public class UserService {
     public void makeFriends(int user1id, int user2id) {
         checkId(user1id);
         checkId(user2id);
-        log.info("Инициализация id пройдена");
         User user1 = userStorage.getUser(user1id);
         User user2 = userStorage.getUser(user2id);
         Set<Integer> friends1 = user1.getFriends();
@@ -57,7 +56,6 @@ public class UserService {
     public List<User> mutualFriends(int user1id, int user2id) {
         checkId(user1id);
         checkId(user2id);
-        log.info("Инициализация id пройдена");
         User user1 = userStorage.getUser(user1id);
         User user2 = userStorage.getUser(user2id);
         return user1.getFriends().stream()
