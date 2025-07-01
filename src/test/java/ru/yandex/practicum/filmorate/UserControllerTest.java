@@ -31,7 +31,7 @@ public class UserControllerTest {
     void beforeEach() {
         userStorage = new InMemoryUserStorage();
         userService = new UserService(userStorage);
-        userController = new UserController(userService, userStorage);
+        userController = new UserController(userService);
         user = new User();
         user.setLogin("username");
         user.setEmail("username@email");
@@ -127,5 +127,13 @@ public class UserControllerTest {
         userController.create(user2);
         userController.makeFriends(user.getId(), user2.getId());
 
+    }
+
+    @Test
+    void unknownIdUpdate() {
+        userController.create(user);
+        User user2 = new User("login", "name2", "name@mail", LocalDate.parse("1996-02-27"));
+        user2.setId(999);
+        assertThrows(NotFoundException.class, () -> userController.update(user2));
     }
 }

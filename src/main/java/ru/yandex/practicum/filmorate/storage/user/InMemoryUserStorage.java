@@ -43,11 +43,7 @@ public class InMemoryUserStorage implements UserStorage {
             log.warn("Id должен быть указан");
             throw new ConditionsNotMetException("Id должен быть указан");
         }
-        if (!users.containsKey(user.getId())) {
-            log.warn("Такого пользователя не существует");
-            throw new NotFoundException("Такого пользователя не существует");
-        }
-
+        checkUser(user.getId());
         User newUser = users.get(user.getId());
 
         if (user.getEmail() != null && user.getEmail().contains("@")) {

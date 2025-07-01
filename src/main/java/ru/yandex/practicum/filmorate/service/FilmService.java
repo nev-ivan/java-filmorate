@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -22,6 +21,7 @@ public class FilmService {
     }
 
     public Film update(Film film) {
+        filmStorage.checkFilm(film.getId());
         return filmStorage.update(film);
     }
 
@@ -45,6 +45,6 @@ public class FilmService {
         return filmStorage.findAll().stream()
                 .sorted(Comparator.comparingInt(film -> film.getLikes().size()))
                 .limit(count)
-                .toList();
+                .toList().reversed();
     }
 }
