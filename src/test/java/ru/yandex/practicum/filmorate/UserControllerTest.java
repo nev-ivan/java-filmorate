@@ -102,7 +102,7 @@ public class UserControllerTest {
         User testUser = userController.create(user);
         testUser.setId(100);
         Exception e = assertThrows(NotFoundException.class, () -> userController.update(testUser));
-        assertEquals("Такого пользователя не существует", e.getMessage());
+        assertEquals("Неизвестный пользователь", e.getMessage());
     }
 
     @Test
