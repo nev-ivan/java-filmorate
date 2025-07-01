@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     public List<Film> findAll() {
-        return films.values().stream().toList();
+        return new ArrayList<>(films.values());
     }
 
     public Film getFilm(int id) {
@@ -43,10 +44,10 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
 
         if (film.getId() == null) {
-            log.warn("ConditionsNotMetException");
+            log.warn("id должен быть указан");
             throw new ConditionsNotMetException("Id должен быть заполнен");
         } else if (!films.containsKey(film.getId())) {
-            log.warn("NotFoundException");
+            log.warn("Такого фильма нет в нашем списке");
             throw new NotFoundException("Такого фильма нет в нашем списке");
         }
 
@@ -71,6 +72,12 @@ public class InMemoryFilmStorage implements FilmStorage {
         films.put(film.getId(), film);
         log.info("Фильм обновлен");
         return film;
+    }
+
+    public void checkFilm(int filmId) {
+        if (!films.containsKey(filmId)) {
+            throw new NotFoundException("Такого фильма нет в нашем списке");
+        }
     }
 
     private void validate(Film film) {

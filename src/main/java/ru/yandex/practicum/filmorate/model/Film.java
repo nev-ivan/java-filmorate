@@ -10,7 +10,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Film implements Comparable<Film> {
+public class Film {
     public Film(String name, String description, LocalDate releaseDate, long duration) {
         this.name = name;
         this.description = description;
@@ -18,12 +18,7 @@ public class Film implements Comparable<Film> {
         this.duration = duration;
     }
 
-    @Override
-    public int compareTo(Film other) {
-        return Integer.compare(other.getLikes().size(), this.getLikes().size());
-    }
 
-    private Set<Integer> likes = new HashSet<>();
     private Integer id;
     @NotBlank
     private String name;
@@ -34,4 +29,5 @@ public class Film implements Comparable<Film> {
     private LocalDate releaseDate;
     @Positive
     private long duration;
+    private Set<Integer> likes = new HashSet<>();
 }

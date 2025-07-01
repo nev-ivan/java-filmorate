@@ -40,11 +40,11 @@ public class InMemoryUserStorage implements UserStorage {
         }
 
         if (user.getId() == null) {
-            log.warn("ConditionsNotMetException");
+            log.warn("Id должен быть указан");
             throw new ConditionsNotMetException("Id должен быть указан");
         }
         if (!users.containsKey(user.getId())) {
-            log.warn("NotFoundException");
+            log.warn("Такого пользователя не существует");
             throw new NotFoundException("Такого пользователя не существует");
         }
 
@@ -73,10 +73,16 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
+    public void checkUser(int userId) {
+        if (!users.containsKey(userId)) {
+            throw new NotFoundException("Неизвестный пользователь");
+        }
+    }
+
     private void validate(User user) {
 
         if (user.getLogin().contains(" ")) {
-            log.warn("ConditionsNotMetException");
+            log.warn("Нельзя добавлять пробелы в логин");
             throw new ConditionsNotMetException("Нельзя добавлять пробелы в логин");
         }
 
@@ -85,7 +91,7 @@ public class InMemoryUserStorage implements UserStorage {
         }
     }
 
-    public Integer getNextId() {
+    private Integer getNextId() {
         int currentMaxId = users.keySet()
                 .stream()
                 .mapToInt(id -> id)

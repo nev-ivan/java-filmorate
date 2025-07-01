@@ -14,4 +14,6 @@ public interface FilmStorage {
     public Film update(Film film);
 
     public Film getFilm(int id);
+
+    public void checkFilm(int id);
 }
