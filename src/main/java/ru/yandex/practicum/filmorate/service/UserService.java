@@ -28,27 +28,22 @@ public class UserService {
     }
 
     public void makeFriends(int user1id, int user2id) {
-        userStorage.checkUser(user1id);
-        userStorage.checkUser(user2id);
+
         if (userStorage.getUser(user1id).getFriends().contains(user2id)) {
             log.warn("Пользователь уже в друзьях");
             throw new ConditionsNotMetException("Пользователь уже в друзьях");
         }
-        userStorage.getUser(user1id).getFriends().add(user2id);
-        userStorage.getUser(user2id).getFriends().add(user1id);
+        userStorage.getUser(user1id).addFriend(user2id);
+        userStorage.getUser(user2id).addFriend(user1id);
         log.info("Добавление в друзья успешно");
     }
 
     public void deleteFromFriends(int user1id, int user2id) {
-        userStorage.checkUser(user1id);
-        userStorage.checkUser(user2id);
-        userStorage.getUser(user1id).getFriends().remove(user2id);
-        userStorage.getUser(user2id).getFriends().remove(user1id);
+        userStorage.getUser(user1id).removeFriend(user2id);
+        userStorage.getUser(user2id).removeFriend(user1id);
     }
 
     public List<User> mutualFriends(int user1id, int user2id) {
-        userStorage.checkUser(user1id);
-        userStorage.checkUser(user2id);
         User user1 = userStorage.getUser(user1id);
         User user2 = userStorage.getUser(user2id);
         return user1.getFriends().stream()
@@ -58,7 +53,6 @@ public class UserService {
     }
 
     public List<User> getFriends(int userId) {
-        userStorage.checkUser(userId);
         return userStorage.getUser(userId).getFriends().stream()
                 .map(userStorage::getUser)
                 .toList();

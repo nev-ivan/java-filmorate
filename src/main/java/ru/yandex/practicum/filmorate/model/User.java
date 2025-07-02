@@ -33,4 +33,12 @@ public class User {
     @Past
     private LocalDate birthday;
     private Set<Integer> friends = new HashSet<>();
+
+    public void addFriend(int friendId) {
+        friends.add(friendId);
+    }
+
+    public void removeFriend(int friendId) {
+        friends.remove(friendId);
+    }
 }

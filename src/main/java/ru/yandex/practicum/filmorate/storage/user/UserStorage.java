@@ -14,6 +14,4 @@ public interface UserStorage {
     public User update(User user);
 
     public User getUser(int id);
-
-    public void checkUser(int id);
 }

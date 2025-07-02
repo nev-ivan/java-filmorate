@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -22,7 +23,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     public User getUser(int id) {
-        return users.get(id);
+        return Optional.ofNullable(users.get(id)).orElseThrow(() -> new NotFoundException("Неизвестный пользователь"));
     }
 
     public User create(User user) {
@@ -43,7 +44,9 @@ public class InMemoryUserStorage implements UserStorage {
             log.warn("Id должен быть указан");
             throw new ConditionsNotMetException("Id должен быть указан");
         }
-        checkUser(user.getId());
+        if(!users.containsKey(user.getId())) {
+            throw new NotFoundException("Неизвестный пользователь");
+        }
         User newUser = users.get(user.getId());
 
         if (user.getEmail() != null && user.getEmail().contains("@")) {
@@ -67,12 +70,6 @@ public class InMemoryUserStorage implements UserStorage {
         users.put(user.getId(), user);
         log.info("Данные пользователя обновлены");
         return user;
-    }
-
-    public void checkUser(int userId) {
-        if (!users.containsKey(userId)) {
-            throw new NotFoundException("Неизвестный пользователь");
-        }
     }
 
     private void validate(User user) {

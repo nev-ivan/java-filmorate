@@ -18,7 +18,6 @@ public class Film {
         this.duration = duration;
     }
 
-
     private Integer id;
     @NotBlank
     private String name;
@@ -30,4 +29,12 @@ public class Film {
     @Positive
     private long duration;
     private Set<Integer> likes = new HashSet<>();
+
+    public void makeLike(int userId) {
+        likes.add(userId);
+    }
+
+    public void unlike(int userId) {
+        likes.remove(userId);
+    }
 }

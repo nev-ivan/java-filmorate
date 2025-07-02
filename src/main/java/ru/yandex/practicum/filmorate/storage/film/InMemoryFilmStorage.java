@@ -8,10 +8,7 @@ import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -34,7 +31,8 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     public Film getFilm(int id) {
-        return films.get(id);
+        return Optional.ofNullable(films.get(id))
+                .orElseThrow(() -> new NotFoundException("Такого фильма нет в нашем списке"));
     }
 
     public Film update(Film film) {
@@ -72,12 +70,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         films.put(film.getId(), film);
         log.info("Фильм обновлен");
         return film;
-    }
-
-    public void checkFilm(int filmId) {
-        if (!films.containsKey(filmId)) {
-            throw new NotFoundException("Такого фильма нет в нашем списке");
-        }
     }
 
     private void validate(Film film) {
