@@ -44,7 +44,7 @@ public class InMemoryUserStorage implements UserStorage {
             log.warn("Id должен быть указан");
             throw new ConditionsNotMetException("Id должен быть указан");
         }
-        if(!users.containsKey(user.getId())) {
+        if (!users.containsKey(user.getId())) {
             throw new NotFoundException("Неизвестный пользователь");
         }
         User newUser = users.get(user.getId());
