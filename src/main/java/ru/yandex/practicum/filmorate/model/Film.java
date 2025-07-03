@@ -4,6 +4,8 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -16,7 +18,6 @@ public class Film {
         this.duration = duration;
     }
 
-
     private Integer id;
     @NotBlank
     private String name;
@@ -27,4 +28,13 @@ public class Film {
     private LocalDate releaseDate;
     @Positive
     private long duration;
+    private Set<Integer> likes = new HashSet<>();
+
+    public void makeLike(int userId) {
+        likes.add(userId);
+    }
+
+    public void unlike(int userId) {
+        likes.remove(userId);
+    }
 }
